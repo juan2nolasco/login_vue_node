@@ -5,6 +5,9 @@
         Book List
         <b-link href="#/add-book">(Add Book)</b-link>
       </h2>
+      <h2>Book List
+        <b-link @click="logout()">(Logout)</b-link>
+      </h2>
       <b-table striped hover :items="books" :fields="fields">
         <template slot="actions" scope="row">
           <b-btn size="sm" @click.stop="details(row.item)">Details</b-btn>
@@ -42,8 +45,27 @@ export default {
          this.books = response.data
       })
       .catch(e => {
-         //https://www.djamware.com/post/5ac8338780aca714d19d5b9e/securing-mevn-stack-vuejs-2-web-application-using-passport
+        this.errors.push(e)
+        if(e.response.status ===  401) {
+          this.$router.push({
+            name: 'Login'
+          })
+        }
       })
    },
+   methods: {
+     details (book) {
+       this.$router.push({
+         name: 'ShowBook',
+         params: { id: book._id }
+       })
+     },
+     logout () {
+       localStorage.removeItem('jwtToken')
+       this.$router.push({
+         name: 'Login'
+       })
+     }
+   }
 }
 </script>
